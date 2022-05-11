@@ -47,6 +47,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _valorAcao = 0.0;
+  double _variacao = 0.0;
   String _acao = ""; //chave de busca
   TextEditingController acaoController = TextEditingController();
   TextEditingController pesoController = TextEditingController();
@@ -149,21 +150,55 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   _valorAcao =
                       snapshot.data?["results"][_acao.toUpperCase()]["price"];
+                  _variacao = snapshot.data?["results"][_acao.toUpperCase()]
+                      ["change_percent"];
                   if (snapshot.data?["results"][_acao.toUpperCase()]
                           ["change_percent"] >
                       0) {
                     return Center(
-                        child: Text(
-                      "R\$ $_valorAcao",
-                      style: TextStyle(color: Colors.green, fontSize: 25.0),
-                      textAlign: TextAlign.center,
+                        child: Column(
+                      children: <Widget>[
+                        Text(
+                          "$_acao",
+                          style: TextStyle(color: Colors.black, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        Divider(color: Colors.transparent),
+                        Text(
+                          "Variação ▲ $_variacao %",
+                          style: TextStyle(color: Colors.green, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        Divider(color: Colors.transparent),
+                        Text(
+                          "R\$ $_valorAcao",
+                          style: TextStyle(color: Colors.green, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
                     ));
                   } else {
                     return Center(
-                        child: Text(
-                      "R\$ $_valorAcao",
-                      style: TextStyle(color: Colors.red, fontSize: 25.0),
-                      textAlign: TextAlign.center,
+                        child: Column(
+                      children: <Widget>[
+                        Text(
+                          "$_acao",
+                          style: TextStyle(color: Colors.black, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        Divider(color: Colors.transparent),
+                        Text(
+                          "Variação ▼ $_variacao %",
+                          style: TextStyle(color: Colors.red, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        Divider(color: Colors.transparent),
+                        Text(
+                          "R\$ $_valorAcao",
+                          style: TextStyle(color: Colors.red, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
                     ));
                   }
                 }
