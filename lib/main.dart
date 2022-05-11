@@ -13,7 +13,11 @@ void main() {
 
 Future<Map> getData(acao) async {
   http.Response response = await http.get(request + acao);
-  return json.decode(response.body);
+  if (response.statusCode == 200) {
+    return json.decode(response.body);
+  } else {
+    throw Exception('Falha ao carregar dados...');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -42,8 +46,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _valorAcao = 40.2;
-  // String _acao = ""; //chave de busca
+  double _valorAcao = 0.0;
+  String _acao = ""; //chave de busca
   TextEditingController acaoController = TextEditingController();
   TextEditingController pesoController = TextEditingController();
 
@@ -52,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print(request + acaoController.text);
     getData(acaoController.text);
 
+    _acao = acaoController.text;
     // debugPrint("Peso ${request} e altura ${acaoController.text}");
     //debugPrint("$imc");
 
@@ -72,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_valorAcao',
               style: Theme.of(context).textTheme.headline4,
             ),
+            // buildFutureBuilder(),
             TextFormField(
               // keyboardType: TextInputType.text,
               decoration: InputDecoration(
@@ -107,5 +113,50 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  buildFutureBuilder() {
+    if (_acao.isEmpty) {
+      return Center(
+          child: Text(
+        "Aguardando dados...",
+        style: TextStyle(color: Colors.amber, fontSize: 25.0),
+        textAlign: TextAlign.center,
+      ));
+    } else {
+      return FutureBuilder<Map>(
+          future: getData(_acao),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Center(
+                    child: Text(
+                  "Carregando dados...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+              default:
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text(
+                    "Erro ao carregar dados...",
+                    style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                    textAlign: TextAlign.center,
+                  ));
+                } else {
+                  _valorAcao =
+                      snapshot.data?["results"][_acao.toUpperCase()]["price"];
+                  return Center(
+                      child: Text(
+                    "$_valorAcao",
+                    style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                    textAlign: TextAlign.center,
+                  ));
+                }
+            }
+          });
+    }
   }
 }
