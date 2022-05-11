@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -64,48 +66,42 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '$_valorAcao',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            TextFormField(
-              // keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                  labelText: "Código da Ação",
-                  labelStyle: TextStyle(color: Colors.blueAccent)),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
-              controller: acaoController,
-              validator: (String? value) {
-                if (value != null && value.isEmpty) return "Insira seu peso!";
-              },
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                child: Container(
-                    height: 50.0,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // if (_formKey.currentState.validate()) {
-                        _buscar();
-                        // }
-                      },
-                      child: Text(
-                        "Buscar",
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          textStyle: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
-                    ))),
-          ],
-        ),
-      ),
+      body: buildFutureBuilder(),
     );
+  }
+
+  buildFutureBuilder() {
+    return FutureBuilder<Map>(
+        future: getData("itsa4"),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(
+                  child: Text(
+                "Carregando dados...",
+                style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                textAlign: TextAlign.center,
+              ));
+            default:
+              if (snapshot.hasError) {
+                return Center(
+                    child: Text(
+                  "Erro ao carregar dados...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+              } else {
+                _valorAcao = snapshot.data?["results"]["ITSA4"]["price"];
+                return Center(
+                    child: Text(
+                  "$_valorAcao",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+              }
+          }
+        });
   }
 }
