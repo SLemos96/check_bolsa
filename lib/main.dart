@@ -73,11 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '$_valorAcao',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            // buildFutureBuilder(),
+            // Text(
+            //   '$_valorAcao',
+            //   style: Theme.of(context).textTheme.headline4,
+            // ),
+            buildFutureBuilder(),
             TextFormField(
               // keyboardType: TextInputType.text,
               decoration: InputDecoration(
@@ -98,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         // if (_formKey.currentState.validate()) {
                         _buscar();
+                        setState(() {});
                         // }
                       },
                       child: Text(
