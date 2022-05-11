@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_acao.isEmpty) {
       return Center(
           child: Text(
-        "Aguardando dados...",
+        "",
         style: TextStyle(color: Colors.amber, fontSize: 25.0),
         textAlign: TextAlign.center,
       ));
@@ -149,12 +149,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   _valorAcao =
                       snapshot.data?["results"][_acao.toUpperCase()]["price"];
-                  return Center(
-                      child: Text(
-                    "$_valorAcao",
-                    style: TextStyle(color: Colors.amber, fontSize: 25.0),
-                    textAlign: TextAlign.center,
-                  ));
+                  if (snapshot.data?["results"][_acao.toUpperCase()]
+                          ["change_percent"] >
+                      0) {
+                    return Center(
+                        child: Text(
+                      "R\$ $_valorAcao",
+                      style: TextStyle(color: Colors.green, fontSize: 25.0),
+                      textAlign: TextAlign.center,
+                    ));
+                  } else {
+                    return Center(
+                        child: Text(
+                      "R\$ $_valorAcao",
+                      style: TextStyle(color: Colors.red, fontSize: 25.0),
+                      textAlign: TextAlign.center,
+                    ));
+                  }
                 }
             }
           });
